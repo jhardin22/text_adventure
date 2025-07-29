@@ -1,0 +1,17 @@
+{
+  "file_paths": {
+    "rooms_data": "data/rooms.json",
+    "items_data": "data/items.json",
+    "save_directory": "saves/"
+  },
+  "display": {
+    "line_width": 80,
+    "separator": "=" * 50,
+    "prompt": "> "
+  },
+  "game_settings": {
+    "auto_save": true,
+    "debug_mode": false,
+    "max_save_slots": 5
+  }
+}
