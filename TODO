@@ -1,0 +1,49 @@
+- [ ] Update issues to include tests for each issue as it's created
+
+# Suggested Order
+
+Issue 1 (Project Structure) - Foundation for everything else
+Issue 6 (Configuration) - Needed by other components
+Issue 2 (Game Loop) - Core functionality
+Issue 3 (Command Parser) - Essential for interaction
+Issue 4 (Help System) - Improves user experience
+Issue 5 (Game State) - Prepares for room/inventory systems
+Issue 7 (Testing) - Ensures code quality as you build
+
+Updated Issues:
+
+## Issue 1: Set up Project Structure
+
+- [x] Create directories and files
+- [x] Add .gitignore and basic documentation
+- [x] Write tests for file structure validation
+
+## Issue 2: Implement Core Game Loop
+
+- [ ] Build main game loop
+- [ ] Add input/output handling
+- [ ] Write tests for game initialization and basic loop
+
+## Issue 3: Create Command Parser System
+
+- [ ] Implement command parsing
+- [ ] Add command aliases and validation
+- [ ] Write tests for various command formats and edge cases
+
+## Issue 4: Implement Help System
+
+- [ ] Create help commands
+- [ ] Add contextual help
+- [ ] Write tests for help command responses
+
+## Issue 5: Basic Game State Management
+
+- [ ] Create GameState class
+- [ ] Implement state tracking
+- [ ] Write tests for state transitions and validation
+
+## Issue 6: Create Configuration System
+
+- [ ] Build config loading
+- [ ] Add validation and defaults
+- [ ] Write tests for config loading and error handling
