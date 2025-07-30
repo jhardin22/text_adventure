@@ -5,14 +5,12 @@ Basic tests to verify project structure is working.
 import unittest
 import sys
 import os
+
 from pathlib import Path
 
-# Add src to path for testing
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'src'))
-
-from game import TextAdventure
-from inventory import Item, Inventory
-from room import HubRoom
+from src.game import TextAdventure
+from src.inventory import Item, Inventory
+from src.room import HubRoom
 
 
 class TestBasicStructure(unittest.TestCase):
