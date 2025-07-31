@@ -7,8 +7,8 @@ import json
 import os
 from pathlib import Path
 
-from inventory import Inventory
-from room import Room, HubRoom
+from src.inventory import Inventory
+from src.room import Room, HubRoom
 
 class TextAdventure:
     """Main game class that manages the overall game state and flow."""

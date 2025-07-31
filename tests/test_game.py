@@ -27,7 +27,10 @@ class TestGame(unittest.TestCase):
             self.game._look_around()
             
             # Check that the output contains parts of the expected data
-            output = " ".join(call.args[0] for call in mock_print.call_args_list)
-            self.assertIn("cavern. There's", output)
-            self.assertIn("set into the rock", output)
-            self.assertIn("white dog lays", output)
+            output = " ".join(call.args[0] for call in mock_print.call_args_list if call.args)
+            self.assertIn("BLUE door with silver bands", output)
+            self.assertIn("connected with twisted gold wire", output)
+            self.assertIn("of the room, watching you with intelligent", output)
+            
+if __name__ == "__main__":
+    unittest.main()
