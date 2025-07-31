@@ -1,27 +1,45 @@
-from typing import Tuple, List, Optional, Dict
+from typing import Tuple, List, Optional, Dict, Any
 
 class CommandParser:
     """
-    Parses user input into a standardized command and its arg
+    Parses user input into a standardized command and its arguments.
     """
     def __init__(self):
-        """Initialize the command parser with a dictionary of commands and aliases"""
-        self.commands: Dict[str, List[str]] = {
-            "help": ["h", "?", "commands"],
-            "quit": ["exit", "q"],
-            "look": ["l", "examine", "inspect"],
-            "go": ["g", "move", "travel"],
-            "inventory": ["inv", "i", "items"],
-            #"talk": ["t", "speak", "chat"],
-            #"use": ["u", "utilize", "apply"],
+        """Initializes the command parser with a dictionary of commands and aliases."""
+        self._commands: Dict[str, Dict[str, Any]] = {
+            "help": {
+                "aliases": ["h", "commands"],
+                "description": "Shows a list of commands or help for a specific command.",
+                "usage": "help [command]"
+            },
+            "quit": {
+                "aliases": ["q", "exit"],
+                "description": "Exits the game.",
+                "usage": "quit"
+            },
+            "look": {
+                "aliases": ["l", "examine", "inspect"],
+                "description": "Examines the current room or a specific object.",
+                "usage": "look [target]"
+            },
+            "go": {
+                "aliases": ["g", "move", "walk"],
+                "description": "Moves in a specified direction.",
+                "usage": "go <direction>"
+            },
+            "inventory": {
+                "aliases": ["i", "inv"],
+                "description": "Checks your inventory.",
+                "usage": "inventory"
+            }
         }
-        
+        # Create a reverse mapping from alias to canonical command for quick lookups
         self._alias_map: Dict[str, str] = {}
-        for command, aliases in self.commands.items():
+        for command, details in self._commands.items():
             self._alias_map[command] = command
-            for alias in aliases:
+            for alias in details["aliases"]:
                 self._alias_map[alias] = command
-                
+
     def parse(self, user_input: str) -> Tuple[Optional[str], List[str]]:
         """
         parses a raw input string into a canonical command and its arguments.
@@ -44,3 +62,14 @@ class CommandParser:
         canonical_command = self._alias_map.get(verb)
 
         return canonical_command, args
+
+    def get_command_details(self, command_name: str) -> Optional[Dict[str, Any]]:
+        """Returns the details for a given command name or alias."""
+        canonical_command = self._alias_map.get(command_name)
+        if canonical_command:
+            return self._commands[canonical_command]
+        return None
+
+    def get_all_commands(self) -> Dict[str, Dict[str, Any]]:
+        """Returns the full dictionary of commands."""
+        return self._commands

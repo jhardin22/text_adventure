@@ -2,7 +2,7 @@
 Core game logic for the text adventure.
 """
 
-from typing import Dict, Any, Optional
+from typing import Dict, Any, Optional, List
 import json
 import os
 from pathlib import Path
@@ -130,16 +130,15 @@ class TextAdventure:
         print()
         self._look_around()
     
-    def _process_command(self, command: str) -> None:
-        """Process a player command."""
-        command, args = self.parser.parse(command)
-        
-        # Basic commands for now
+    def _process_command(self, user_input: str) -> None:
+        """Process a player command using the command parser."""
+        command, args = self.parser.parse(user_input)
+
         if command == "quit":
             print("Thanks for playing!")
             self.running = False
         elif command == "help":
-            self._show_help()
+            self._show_help(args)
         elif command == "look":
             self._look_around()
         elif command == "go":
@@ -154,15 +153,32 @@ class TextAdventure:
         else:
             # A command was recognized but has no action yet
             print(f"The '{command}' command isn't implemented yet.")
-    
-    def _show_help(self) -> None:
-        """Display available commands."""
-        print("\nAvailable Commands:")
-        print("  help, h, ?      - Show this help message")
-        print("  look, l      - Look around the current area")
-        print("  quit, exit   - Quit the game")
-        print()
-    
+
+    def _show_help(self, args: List[str]) -> None:
+        """Display general help or help for a specific command."""
+        if not args:
+            # General help
+            print("\nAvailable Commands:")
+            print("Type 'help <command>' for more details on a specific command.")
+            print("-" * 30)
+            for command, details in self.parser.get_all_commands().items():
+                print(f"  {command:<12} {details['description']}")
+            print()
+        else:
+            # Specific command help
+            command_name = args[0]
+            details = self.parser.get_command_details(command_name)
+            if details:
+                aliases = ", ".join(details['aliases'])
+                print(f"\n--- Help: {command_name} ---")
+                print(f"Description: {details['description']}")
+                print(f"Usage: {details['usage']}")
+                if aliases:
+                    print(f"Aliases: {aliases}")
+                print()
+            else:
+                print(f"\nSorry, '{command_name}' is not a recognized command.")
+
     def _look_around(self) -> None:
         """Display the current room description."""
         print(self.current_room.look())
