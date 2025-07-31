@@ -9,6 +9,7 @@ from pathlib import Path
 
 from src.inventory import Inventory
 from src.room import Room, HubRoom
+from src.command_parser import CommandParser
 
 class TextAdventure:
     """Main game class that manages the overall game state and flow."""
@@ -29,6 +30,7 @@ class TextAdventure:
         self.inventory = Inventory()
         self.rooms: Dict[str, Room] = self._load_rooms()
         self.current_room: Room = self.rooms[self.game_state["current_room_id"]]
+        self.parser = CommandParser()
     
     def _load_config(self) -> Dict[str, Any]:
         """Load game configuration from config.json."""
@@ -130,18 +132,28 @@ class TextAdventure:
     
     def _process_command(self, command: str) -> None:
         """Process a player command."""
-        command = command.lower().strip()
+        command, args = self.parser.parse(command)
         
         # Basic commands for now
-        if command in ['quit', 'exit', 'q']:
+        if command == "quit":
             print("Thanks for playing!")
             self.running = False
-        elif command in ['help', 'h', '?']:
+        elif command == "help":
             self._show_help()
-        elif command in ['look', 'l']:
+        elif command == "look":
             self._look_around()
+        elif command == "go":
+            if args:
+                print(f"You want to go {args[0]}... but movement isn't ready yet.")
+            else:
+                print("Go Where? (e.g. 'go north')")
+        elif command == "inventory":
+            print("You check your pockets, they're empty for now.")   
+        elif command is None:
+            print(f"I didn't understand {user_input}. Type 'help' for available commands.")
         else:
-            print(f"I don't understand '{command}'. Type 'help' for available commands.")
+            # A command was recognized but has no action yet
+            print(f"The '{command}' command isn't implemented yet.")
     
     def _show_help(self) -> None:
         """Display available commands."""
