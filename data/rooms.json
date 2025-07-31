@@ -1,0 +1,16 @@
+{
+    "hub": {
+        "type": "hub",
+        "name": "The Hub",
+        "description": "A spacious cavern. There's no light source, but everything is bright and clear. There are three doors that seem to be set into the rock walls. In the middle of the room a big white dog lays on a rug.",
+        "exits": {
+            "blue_door": "blue_door_story",
+            "red_door": "red_door_story",
+            "black_door": "black_door_story"
+        },
+        "details": {
+            "doors": "Three doors are set into the walls: \n - a BLUE door with silver bands \n - a RED door with an ornate bronze floral pattern \n - a BLACK door covered with iron studs connected with twisted gold wire",
+            "dog": "A big white dog lays on a rug in the center of the room, watching you with intelligent eyes, and wagging his tail."
+        }
+    }
+}

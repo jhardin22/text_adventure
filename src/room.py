@@ -44,12 +44,13 @@ class Room(ABC):
 class HubRoom(Room):
     """The central hub room with the talking dog and three doors."""
     
-    def __init__(self) -> None:
+    def __init__(self, data: Dict[str, Any]) -> None:
         super().__init__(
             room_id="hub",
-            name="The Hub",
-            description="A warm, welcoming space with a friendly dog and three mysterious doors."
+            name=data.get("name", "The Hub"),
+            description=data.get("description", "A warm, welcoming space with a friendly dog and three mysterious doors.")
         )
+        self.details = data.get("details", {})
     
     def enter(self, player_state: Dict[str, Any]) -> str:
         """Handle entering the hub room."""
@@ -59,12 +60,9 @@ class HubRoom(Room):
     def look(self) -> str:
         """Return the hub room description."""
         description = [
-            "You are in a cozy, circular room with warm lighting.",
-            "A friendly golden retriever sits in the center, watching you with intelligent eyes.",
-            "Three ornate doors are evenly spaced around the room:",
-            "  - A door to the NORTH with intricate silver patterns",
-            "  - A door to the EAST with golden engravings", 
-            "  - A door to the SOUTH with mysterious dark wood carvings"
+            "You are in a large cavern with rock walls.",
+            self.details.get("doors", "Three ornate doors are evenly spaced around the room."),
+            self.details.get("dog", "A large fluffy dog lays on the rug in the middle of the room.")
         ]
         
         if self.items:

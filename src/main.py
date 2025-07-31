@@ -10,7 +10,7 @@ import os
 # Add src directory to path for imports
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from game import TextAdventure
+from src.game import TextAdventure
 
 
 def main() -> None:

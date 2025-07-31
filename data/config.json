@@ -6,8 +6,8 @@
   },
   "display": {
     "line_width": 80,
-    "separator": "=" * 50,
-    "prompt": "> "
+    "prompt": "> ",
+    "separator": "========================="
   },
   "game_settings": {
     "auto_save": true,
