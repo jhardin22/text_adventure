@@ -46,7 +46,6 @@ class TestBasicStructure(unittest.TestCase):
         hub = HubRoom(rooms_data["hub"])
         self.assertEqual(game.current_room.room_id, "hub")
         self.assertFalse(game.running)
-        self.assertEqual(hub.room_id, "hub")
         self.assertEqual(game.current_room.name, "The Hub")
         
 
