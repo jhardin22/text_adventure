@@ -18,7 +18,7 @@ class TestBasicStructure(unittest.TestCase):
         """Test that the game can be initialized."""
         game = TextAdventure()
         self.assertIsNotNone(game)
-        self.assertEqual(game.current_room, "hub")
+        self.assertEqual(game.current_room.room_id, "hub")
         self.assertFalse(game.running)
     
     def test_inventory_creation(self):
