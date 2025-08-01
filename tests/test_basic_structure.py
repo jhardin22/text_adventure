@@ -3,9 +3,7 @@ Basic tests to verify project structure is working.
 """
 
 import unittest
-import sys
-import os
-
+import json
 from pathlib import Path
 
 from src.game import TextAdventure
@@ -37,7 +35,12 @@ class TestBasicStructure(unittest.TestCase):
     
     def test_hub_room_creation(self):
         """Test hub room can be created."""
-        hub = HubRoom()
+        # Load actual room data from JSON
+        rooms_path = Path(__file__).parent.parent / "data" / "rooms.json"
+        with open(rooms_path, 'r') as f:
+         rooms_data = json.load(f)
+    
+        hub = HubRoom(rooms_data["hub"])
         self.assertEqual(hub.room_id, "hub")
         self.assertEqual(hub.name, "The Hub")
         self.assertFalse(hub.visited)
