@@ -28,8 +28,8 @@ class TestGame(unittest.TestCase):
             
             # Check that the output contains parts of the expected data
             output = " ".join(call.args[0] for call in mock_print.call_args_list if call.args)
-            self.assertIn("BLUE door with silver bands", output)
-            self.assertIn("connected with twisted gold wire", output)
+            self.assertIn("To the SOUTH, a blue", output)
+            self.assertIn(" EAST, a red door with an ornate", output)
             self.assertIn("of the room, watching you with intelligent", output)
             
 if __name__ == "__main__":
