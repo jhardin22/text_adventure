@@ -4,7 +4,7 @@ Room management for the text adventure.
 
 from typing import Dict, List, Any, Optional
 from abc import ABC, abstractmethod
-
+from .inventory import Item
 
 class Room(ABC):
     """Abstract base class for all rooms in the game."""
@@ -14,7 +14,7 @@ class Room(ABC):
         self.room_id: str = room_id
         self.name: str = name
         self.description: str = description
-        self.items: List[str] = []
+        self.items: List[Item] = []
         self.exits: Dict[str, str] = {}
         self.visited: bool = False
     
@@ -28,18 +28,25 @@ class Room(ABC):
         """Return the room's description when player looks around."""
         pass
     
-    def add_item(self, item_id: str) -> None:
+    def add_item(self, item: Item) -> None:
         """Add an item to this room."""
-        if item_id not in self.items:
-            self.items.append(item_id)
-    
+        if not any(i.item_id == item.item_id for i in self.items):
+            self.items.append(item)
+
     def remove_item(self, item_id: str) -> bool:
         """Remove an item from this room."""
-        if item_id in self.items:
-            self.items.remove(item_id)
-            return True
+        for item in self.items:
+            if item.item_id == item_id:
+                self.items.remove(item)
+                return True
         return False
 
+    def get_item_by_name(self, name: str) -> Optional[Item]:
+        """Finds an item in the room by its name (case-insensitive)."""
+        for item in self.items:
+            if item.name.lower() == name.lower():
+                return item
+        return None
 
 class HubRoom(Room):
     """The central hub room with the talking dog and three doors."""
@@ -51,6 +58,7 @@ class HubRoom(Room):
             description=data.get("description", "A warm, welcoming space with a friendly dog and three mysterious doors.")
         )
         self.details = data.get("details", {})
+        self.exits = data.get("exits", {})
     
     def enter(self, player_state: Dict[str, Any]) -> str:
         """Handle entering the hub room."""
@@ -60,12 +68,13 @@ class HubRoom(Room):
     def look(self) -> str:
         """Return the hub room description."""
         description = [
-            "You are in a large cavern with rock walls.",
-            self.details.get("doors", "Three ornate doors are evenly spaced around the room."),
-            self.details.get("dog", "A large fluffy dog lays on the rug in the middle of the room.")
+            self.description, # Use the description loaded from JSON
+            self.details.get("dog", "A friendly dog is here."),
+            self.details.get("doors", "You see three doors."),
         ]
         
         if self.items:
-            description.append(f"You can see: {', '.join(self.items)}")
+            item_names = [item.name for item in self.items]
+            description.append(f"On the floor, you see: {', '.join(item_names)}.")
         
         return "\n".join(description)

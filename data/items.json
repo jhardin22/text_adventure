@@ -1,0 +1,12 @@
+{
+    "silver_key": {
+        "name": "Silver Key",
+        "description": "A small, ornate key made of polished silver. It feels cool to the touch.",
+        "flavor_text": "An inscription on the bow reads: 'For the first memory.'"
+    },
+    "dog_treat": {
+        "name": "A Schmacko",
+        "description": "A delicious-looking dog treat. It smells of bacon and cheese.",
+        "flavor_text": "The dog seems to be eyeing this with great interest."
+    }
+}

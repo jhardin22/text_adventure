@@ -7,7 +7,7 @@ import json
 import os
 from pathlib import Path
 
-from src.inventory import Inventory
+from src.inventory import Inventory, Item
 from src.room import Room, HubRoom
 from src.command_parser import CommandParser
 from src.game_state import GameState
@@ -22,11 +22,36 @@ class TextAdventure:
                 
         self.state = GameState()
         
-        self.inventory = Inventory()
+        self.items: Dict[str, Item] = self._load_items()
+        self.inventory = Inventory(self.items)
         self.rooms: Dict[str, Room] = self._load_rooms()
-        self.current_room: Room = self.rooms[self.game_state[self.state.current_room_id]]
+        
+        self._sync_state()
+        
+        self.current_room: Room = self.rooms[self.state.current_room_id]
         self.parser = CommandParser()
     
+    def _load_items(self) -> Dict[str, Item]:
+        """Load all item data from the items.json file."""
+        items_path = Path(self.config["file_paths"]["items_data"])
+        all_items: Dict[str, Item] = {}
+        try:
+            with open(items_path, 'r', encoding='utf-8') as f:
+                items_data = json.load(f)
+                for item_id, data in items_data.items():
+                    all_items[item_id] = Item(
+                        item_id=item_id,
+                        name=data.get("name", "Unknown Item"),
+                        description=data.get("description", "No description available."),
+                        flavor_text=data.get("flavor_text", "")
+                    )
+    
+        except FileNotFoundError:
+            print(f"Fatal Error: Item data file not found at {items_path}")
+        except json.JSONDecodeError:
+            print(f"Fatal Error: Failed to parse item data file at {items_path}")
+        return all_items 
+            
     def _load_config(self) -> Dict[str, Any]:
         """Load game configuration from config.json."""
         config_path = Path("data/config.json")
@@ -71,8 +96,9 @@ class TextAdventure:
                 rooms_data = json.load(f)
                 
                 for room_id, room_data in rooms_data.items():
+                    room_instance = None
                     if room_data.get("type") == "hub":
-                        rooms[room_id] = HubRoom(room_data)
+                        room_instance = HubRoom(room_data)
                     # elif room_data.get("type") == "blue":
                     #     rooms[room_id] = BlueRoom(room_data)
                     # elif room_data.get("type") == "red":
@@ -81,7 +107,14 @@ class TextAdventure:
                     #     rooms[room_id] = BlackRoom(room_ data)
                     else:
                         print(f"Warning: Unknown room type for room_id: {room_id}")
+                        continue # Skip to the next iteration of the loop
                         
+                    # This part runs only if a room_instance was created
+                    for item_id in room_data.get("items", []):
+                        if item_id in self.items:
+                            room_instance.add_item(self.items[item_id])
+                    
+                    rooms[room_id] = room_instance
         except FileNotFoundError:
             print(f"Fatal Error: Room data file not found at {rooms_path}")
             raise
@@ -135,16 +168,16 @@ class TextAdventure:
         elif command == "help":
             self._show_help(args)
         elif command == "look":
-            self._look_around()
+            self._handle_look(args)
         elif command == "go":
-            if args:
-                print(f"You want to go {args[0]}... but movement isn't ready yet.")
-            else:
-                print("Go Where? (e.g. 'go north')")
+            self._handle_go(args)
         elif command == "inventory":
-            print("You check your pockets, they're empty for now.")   
+            self._handle_inventory()
+        elif command == "take":
+            self._handle_take(args)
         elif command is None:
-            print(f"I didn't understand {user_input}. Type 'help' for available commands.")
+            # The parser did not recognize the command
+            print(f"I don't understand '{user_input}'. Type 'help' for available commands.")
         else:
             # A command was recognized but has no action yet
             print(f"The '{command}' command isn't implemented yet.")
@@ -174,7 +207,78 @@ class TextAdventure:
             else:
                 print(f"\nSorry, '{command_name}' is not a recognized command.")
 
-    def _look_around(self) -> None:
-        """Display the current room description."""
-        print(self.current_room.look())
+    def _handle_look(self, args: List[str]) -> None:
+        """Handles the 'look' command, for looking at the room or specific items."""
+        if not args:
+            # 'look' or 'look around'
+            print(self.current_room.look())
+        else:
+            # 'look <target>'
+            target_name = " ".join(args)
+            # Check inventory first
+            item_in_inventory = self.inventory.get_item_by_name(target_name)
+            if item_in_inventory:
+                print(item_in_inventory.description)
+                if item_in_inventory.flavor_text:
+                    print(item_in_inventory.flavor_text)
+                return
+
+            # Check room next
+            item_in_room = self.current_room.get_item_by_name(target_name)
+            if item_in_room:
+                print(item_in_room.description)
+                return
+            
+            print(f"You don't see any '{target_name}' here.")
+
+    def _handle_go(self, args: List[str]) -> None:
+        """Handles the 'go' command for movement."""
+        if not args:
+            print("Go where? (e.g., 'go north')")
+            return
+        
+        direction = args[0]
+        # This is where we'll add logic for locked doors later
+        next_room_id = self.current_room.exits.get(direction)
+
+        if next_room_id:
+            self.state.current_room_id = next_room_id
+            self.current_room = self.rooms[next_room_id]
+            print(f"\nYou go {direction}...")
+            self._handle_look([]) # Look around the new room
+        else:
+            print(f"You can't go {direction}.")
+
+    def _handle_inventory(self) -> None:
+        """Displays the player's inventory."""
+        if self.inventory.is_empty():
+            print("\nYour inventory is empty.")
+        else:
+            print("\nYou are carrying:")
+            for item_name in self.inventory.list_items():
+                print(f"  - {item_name}")
         print()
+
+    def _handle_take(self, args: List[str]) -> None:
+        """Handles the 'take' command for picking up items."""
+        if not args:
+            print("Take what?")
+            return
+        
+        item_name = " ".join(args)
+        item_to_take = self.current_room.get_item_by_name(item_name)
+
+        if item_to_take:
+            # Remove from room
+            self.current_room.remove_item(item_to_take.item_id)
+            # Add to inventory object
+            self.inventory.add_item(item_to_take)
+            # Add to game state
+            self.state.add_item(item_to_take.item_id)
+            print(f"You take the {item_to_take.name}.")
+        else:
+            print(f"You don't see any '{item_name}' here.")
+
+    def _look_around(self) -> None:
+        """A convenience wrapper for the look command."""
+        self._handle_look([])
