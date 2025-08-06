@@ -10,6 +10,7 @@ from pathlib import Path
 from src.inventory import Inventory
 from src.room import Room, HubRoom
 from src.command_parser import CommandParser
+from src.game_state import GameState
 
 class TextAdventure:
     """Main game class that manages the overall game state and flow."""
@@ -19,17 +20,11 @@ class TextAdventure:
         self.config: Dict[str, Any] = self._load_config()
         self.running: bool = False
                 
-        self.game_state: Dict[str, Any] = {
-            "player_name": "",
-            "current_room_id": "hub",
-            "inventory": [],
-            "doors_completed": [],
-            "game_flags": {}
-        }
+        self.state = GameState()
         
         self.inventory = Inventory()
         self.rooms: Dict[str, Room] = self._load_rooms()
-        self.current_room: Room = self.rooms[self.game_state["current_room_id"]]
+        self.current_room: Room = self.rooms[self.game_state[self.state.current_room_id]]
         self.parser = CommandParser()
     
     def _load_config(self) -> Dict[str, Any]:
