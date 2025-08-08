@@ -78,3 +78,25 @@ class HubRoom(Room):
             description.append(f"On the floor, you see: {', '.join(item_names)}.")
         
         return "\n".join(description)
+    
+class StoryRoom(Room):
+    """A generic room for story segements."""
+    def __init__(self, data: Dict[str, Any]) -> None:
+        super().__init__(
+            room_id=data.get("room_id"),
+            name=data.get("name", "A Mysterious Place"),
+            description=data.get("description", "You're in a room.")
+        )
+        self.exits = data.get("exits", {})
+        
+    def enter(self, player_state: Dict[str, Any]) -> str:
+        self.visited = True
+        return self.look()
+    
+    def look(self) -> str:
+        description = [self.description]
+        if self.items:
+            item_names = [item.name for item in self.items]
+            description.append(f"You can see: {', '.join(item_names)}.")
+        return "\n".join(description)
+        

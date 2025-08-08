@@ -8,7 +8,7 @@ import os
 from pathlib import Path
 
 from src.inventory import Inventory, Item
-from src.room import Room, HubRoom
+from src.room import Room, HubRoom, StoryRoom
 from src.command_parser import CommandParser
 from src.game_state import GameState
 
@@ -97,10 +97,13 @@ class TextAdventure:
                 
                 for room_id, room_data in rooms_data.items():
                     room_instance = None
-                    if room_data.get("type") == "hub":
+                    room_type = room_data.get("type")
+                    
+                    if room_type == "hub":
                         room_instance = HubRoom(room_data)
-                    # elif room_data.get("type") == "blue":
-                    #     rooms[room_id] = BlueRoom(room_data)
+                    elif room_type == "story":
+                        room_data["room_id"] = room_id
+                        room_instance = StoryRoom(room_data)
                     # elif room_data.get("type") == "red":
                     #     rooms[room_id] = RedRoom(room_data)
                     # elif room_data.get("type") == "black":
@@ -126,8 +129,7 @@ class TextAdventure:
             raise ValueError("No rooms were loaded, check the data file.") 
         
         return rooms
-            
-               
+                 
     def run(self) -> None:
         """Main game loop."""
         self.running = True
@@ -238,17 +240,38 @@ class TextAdventure:
             return
         
         direction = args[0]
-        # This is where we'll add logic for locked doors later
-        next_room_id = self.current_room.exits.get(direction)
-
-        if next_room_id:
-            self.state.current_room_id = next_room_id
-            self.current_room = self.rooms[next_room_id]
-            print(f"\nYou go {direction}...")
-            self._handle_look([]) # Look around the new room
+        exit_info = self.current_room.exits.get(direction)
+        
+        if not exit_info:
+            print(f"You can't go {direction} from here.")
+            return
+        
+        if isinstance(exit_info, dict):
+            # This is a complex exit (potentially locked door)
+            if exit_info.get("locked"):
+                required_key = exit_info.get("key")
+                if required_key and self.state.has_item(required_key):
+                    # Player has key
+                    print(exit_info.get("unlock_message", "The door seems to hum for a moment and slowly swings open."))
+                    next_room_id = exit_info["destination"] #type: ignore
+                else:
+                    # Door is locked and player doesn't have key
+                    message = exit_info.get("message", f"The door to the {direction} is locked.")
+                    print(message)
+                    return  # Important: return here to prevent movement
+            else:
+                # It's a complex exit but not locked
+                next_room_id = exit_info["destination"] #type: ignore
         else:
-            print(f"You can't go {direction}.")
+            # It's a simple exit (just a string with the room ID)
+            next_room_id = exit_info
 
+        # Move the player to the new room
+        self.state.current_room_id = next_room_id
+        self.current_room = self.rooms[next_room_id]
+        print(f"\nYou go {direction}...")
+        self._handle_look([])  # Look around the new room
+        
     def _handle_inventory(self) -> None:
         """Displays the player's inventory."""
         if self.inventory.is_empty():
@@ -258,7 +281,7 @@ class TextAdventure:
             for item_name in self.inventory.list_items():
                 print(f"  - {item_name}")
         print()
-
+        
     def _handle_take(self, args: List[str]) -> None:
         """Handles the 'take' command for picking up items."""
         if not args:
@@ -276,9 +299,22 @@ class TextAdventure:
             # Add to game state
             self.state.add_item(item_to_take.item_id)
             print(f"You take the {item_to_take.name}.")
+            if item_to_take.flavor_text:
+                print(f"{item_to_take.flavor_text}")
         else:
             print(f"You don't see any '{item_name}' here.")
 
     def _look_around(self) -> None:
         """A convenience wrapper for the look command."""
         self._handle_look([])
+        
+    def _sync_state(self) -> None:
+        """Sync the game state with the current room and inventory."""
+        for item_id in self.state.inventory_ids:
+            if item_id in self.items:
+                self.inventory.add_item(self.items[item_id])
+                
+        for room in self.rooms.values():
+            for item in list(room.items):
+                if self.state.has_item(item.item_id):
+                    room.remove_item(item.item_id)

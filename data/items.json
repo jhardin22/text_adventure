@@ -1,12 +1,17 @@
 {
-    "silver_key": {
-        "name": "Silver Key",
-        "description": "A small, ornate key made of polished silver. It feels cool to the touch.",
-        "flavor_text": "An inscription on the bow reads: 'For the first memory.'"
+    "flute": {
+        "name": "FLUTE",
+        "description": "A small, ornate flute made of polished silver. It feels cool to the touch. \n",
+        "flavor_text": "As you hold it in your hands, you can almost hear a faint melody echoing from within. \n"
+    },
+    "engraved_key": {
+        "name": "ENGRAVED KEY",
+        "description": "A heavy bronze key with an intricate floral pattern engraved on its bow.",
+        "flavor_text": "It feels warm in your hand, humming with a gentle energy."
     },
     "dog_treat": {
-        "name": "A Schmacko",
-        "description": "A delicious-looking dog treat. It smells of bacon and cheese.",
-        "flavor_text": "The dog seems to be eyeing this with great interest."
+        "name": "BACON",
+        "description": "A delicious-looking dog treat. It smells like bacon. \n",
+        "flavor_text": "The dog seems to be eyeing this with great interest. \n"
     }
 }

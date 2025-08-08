@@ -23,9 +23,19 @@ class TestBasicStructure(unittest.TestCase):
     
     def test_inventory_creation(self):
         """Test inventory can be created and used."""
-        inventory = Inventory()
+        # Create a sample items dictionary
+        sample_items = {
+            "test_item": Item("test_item", "Test Item", "A test item for testing.")
+        }
+        inventory = Inventory(sample_items)
         self.assertTrue(inventory.is_empty())
         self.assertEqual(inventory.count(), 0)
+        
+        # Test that we can add an item from the definitions
+        test_item = sample_items["test_item"]
+        self.assertTrue(inventory.add_item(test_item))
+        self.assertFalse(inventory.is_empty())
+        self.assertEqual(inventory.count(), 1)
     
     def test_item_creation(self):
         """Test items can be created."""

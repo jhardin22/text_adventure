@@ -2,16 +2,35 @@
     "hub": {
         "type": "hub",
         "name": "The Hub",
-        "description": "A spacious cavern. There's no light source, but everything is bright and clear. There are three doors that seem to be set into the rock walls. In the middle of the room a big white dog lays on a rug.",
-        "items": ["dog_treat"],
+        "description": "A spacious cavern. There's no light source, but everything is bright and clear. There are three doors that seem to be set into the rock walls. In the middle of the room a big white dog lays on a rug. \n",
+        "items": ["dog_treat", "flute"],
         "exits": {
-            "south": "blue_door_story",
-            "east": "red_door_story",
-            "north": "black_door_story"
+            "south": {
+                "destination": "blue_room",
+                "locked": true,
+                "key": "flute",
+                "message": "As you approach the door, you hear a soft warm tone that seems to come from the door, somewhere, you hear a FLUTE playing.",
+                "unlock_message": "Something inside you swells, there's a feeling of hope and excitement. As your excitement builds you reach out and touch the door, \n you feel something calling you from the other side. The door opens and you step through. \n"
+            },
+            "east": "red_room",
+            "north": "black_room"
         },
         "details": {
-            "doors": "Three doors are set into the walls: \n - To the SOUTH, a blue door with silver bands \n - To the EAST, a red door with an ornate bronze floral pattern \n - To the NORTH, a door covered with iron studs connected with twisted gold wire",
-            "dog": "A big white DOG lays on a rug in the center of the room, watching you with intelligent eyes, and wagging his tail."
+            "doors": "Three doors are set into the walls: \n - To the SOUTH, a blue door with silver bands \n - To the EAST, a red door with an ornate bronze floral pattern \n - To the NORTH, a door covered with iron studs connected with twisted gold wire. \n",
+            "dog": "A big white DOG lays on a rug in the center of the room, watching you with intelligent eyes, and wagging his tail. \n",
+            "feels": "There's something ominous about the air in this room. It makes you want to investigate, even though \n another part of you really wants to leave. \n"
+        }
+    },
+    "blue_room": {
+        "type": "story",
+        "name": "Blue Room",
+        "description": "As you pass through the portal, the air is cool and smells faintly of mint.",
+        "items": ["wedding_band"],
+        "exits": {
+            "north": "hub"
+        },
+        "details": {
+            "hallway": "You find yourself in a comfortably lit hallway. A blue carpet runs down the hall and around the corner. \n The air in the hall is warm, and there is a a faint smell of another person in the air. The feeling of excitement falls as you walk \n down the hall, but something about the smell keeps the feeling from leaving you completely. \n You reach the end of the hall and find an open doorway with a sign that reads 'Blue Room'."
         }
     }
 }

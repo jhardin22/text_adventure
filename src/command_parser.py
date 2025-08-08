@@ -31,6 +31,11 @@ class CommandParser:
                 "aliases": ["i", "inv"],
                 "description": "Checks your inventory.",
                 "usage": "inventory"
+            },
+            "take": {
+                "aliases": ["get", "pick", "grab"],
+                "description": "Takes an item from the current room.",
+                "usage": "take <item>"
             }
         }
         # Create a reverse mapping from alias to canonical command for quick lookups
