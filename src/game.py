@@ -87,15 +87,21 @@ class TextAdventure:
         
     def _load_rooms(self) -> Dict[str, Room]:
         """
-        Load all room data from rooms.json
+        Load all room data from individual .json files in the rooms directory.
         """
-        rooms_path = Path(self.config["file_paths"]["rooms_data"])
+        rooms_dir = Path(self.config["file_paths"]["rooms_data"])
         rooms: Dict[str, Room] = {}
-        try:
-            with open(rooms_path, 'r', encoding='utf-8') as f:
-                rooms_data = json.load(f)
-                
-                for room_id, room_data in rooms_data.items():
+        
+        if not rooms_dir.is_dir():
+            print(f"Fatal Error: Room data directory not found at {rooms_dir}")
+            raise FileNotFoundError
+
+        for room_file in rooms_dir.glob('*.json'):
+            try:
+                with open(room_file, 'r', encoding='utf-8') as f:
+                    room_data = json.load(f)
+                    room_id = room_file.stem  # e.g., "hub.json" -> "hub"
+                    
                     room_instance = None
                     room_type = room_data.get("type")
                     
@@ -104,13 +110,9 @@ class TextAdventure:
                     elif room_type == "story":
                         room_data["room_id"] = room_id
                         room_instance = StoryRoom(room_data)
-                    # elif room_data.get("type") == "red":
-                    #     rooms[room_id] = RedRoom(room_data)
-                    # elif room_data.get("type") == "black":
-                    #     rooms[room_id] = BlackRoom(room_ data)
                     else:
                         print(f"Warning: Unknown room type for room_id: {room_id}")
-                        continue # Skip to the next iteration of the loop
+                        continue
                         
                     # This part runs only if a room_instance was created
                     for item_id in room_data.get("items", []):
@@ -118,18 +120,13 @@ class TextAdventure:
                             room_instance.add_item(self.items[item_id])
                     
                     rooms[room_id] = room_instance
-        except FileNotFoundError:
-            print(f"Fatal Error: Room data file not found at {rooms_path}")
-            raise
-        except json.JSONDecodeError:
-            print(f"Fatal Error: Failed to parse room data file at {rooms_path}")
-            raise
+            except json.JSONDecodeError:
+                print(f"Fatal Error: Failed to parse room data file at {room_file}")
+            except Exception as e:
+                print(f"An unexpected error occurred loading {room_file}: {e}")
 
-        if not rooms: 
-            raise ValueError("No rooms were loaded, check the data file.") 
-        
         return rooms
-                 
+    
     def run(self) -> None:
         """Main game loop."""
         self.running = True
@@ -177,6 +174,8 @@ class TextAdventure:
             self._handle_inventory()
         elif command == "take":
             self._handle_take(args)
+        elif command == "choose":
+            self._handle_choose(args)
         elif command is None:
             # The parser did not recognize the command
             print(f"I don't understand '{user_input}'. Type 'help' for available commands.")
@@ -213,7 +212,7 @@ class TextAdventure:
         """Handles the 'look' command, for looking at the room or specific items."""
         if not args:
             # 'look' or 'look around'
-            print(self.current_room.look())
+            print(self.current_room.look(self.state)) # MODIFIED: Pass the state
         else:
             # 'look <target>'
             target_name = " ".join(args)
@@ -247,7 +246,12 @@ class TextAdventure:
             return
         
         if isinstance(exit_info, dict):
-            # This is a complex exit (potentially locked door)
+            # This is a complex exit, potentially locked
+            completion_flag = exit_info.get("completion_flag")
+            if completion_flag and self.state.get_flag(completion_flag):
+                print("That path is closed to you now.")
+                return
+
             if exit_info.get("locked"):
                 required_key = exit_info.get("key")
                 if required_key and self.state.has_item(required_key):
@@ -269,8 +273,8 @@ class TextAdventure:
         # Move the player to the new room
         self.state.current_room_id = next_room_id
         self.current_room = self.rooms[next_room_id]
-        print(f"\nYou go {direction}...")
-        self._handle_look([])  # Look around the new room
+        print(f"\nYou go {direction}...\n")
+        self._handle_look([])  
         
     def _handle_inventory(self) -> None:
         """Displays the player's inventory."""
@@ -303,6 +307,58 @@ class TextAdventure:
                 print(f"{item_to_take.flavor_text}")
         else:
             print(f"You don't see any '{item_name}' here.")
+
+    def _handle_choose(self, args: List[str]) -> None:
+        """Handles the 'choose' command for story choices."""
+        if not isinstance(self.current_room, StoryRoom):
+            print("There are no choices to make here.")
+            return
+
+        current_node_data = self.current_room.get_current_node_data(self.state)
+        if not current_node_data or "choices" not in current_node_data:
+            print("There are no choices to make here.")
+            return
+
+        try:
+            choice_num = int(args[0])
+            choices = current_node_data["choices"]
+            if not (1 <= choice_num <= len(choices)):
+                raise ValueError
+        except (ValueError, IndexError):
+            print(f"That's not a valid choice. Please choose a number between 1 and {len(choices)}.")
+            return
+
+        selected_choice = choices[choice_num - 1]
+
+        # --- NEW LOGIC: Check for a branch or a leaf ---
+        next_node_id = selected_choice.get("next_node")
+        if next_node_id:
+            # This is a BRANCH. Update state and show the new choices.
+            self.state.set_story_node(self.current_room.room_id, next_node_id)
+            print("\nYou focus on that memory...")
+            self._handle_look([]) # Re-display the room with the new choices
+            return
+
+        # This is a LEAF. Resolve the story as before.
+        print(f"\n{selected_choice['outcome_text']}")
+
+        reward_id = selected_choice.get("reward")
+        if reward_id and reward_id in self.items:
+            item = self.items[reward_id]
+            self.inventory.add_item(item)
+            self.state.add_item(item.item_id)
+            print(f"You received: {item.name}")
+
+        if self.current_room.completion_flag:
+            self.state.set_flag(self.current_room.completion_flag, True)
+            print("\nA feeling of finality settles over the memory.")
+
+        hub_exit = self.current_room.exits.get("return")
+        if hub_exit:
+            self.state.current_room_id = hub_exit
+            self.current_room = self.rooms[hub_exit]
+            print("\nThe memory fades, and you find yourself back in the cavern.")
+            self._handle_look([])
 
     def _look_around(self) -> None:
         """A convenience wrapper for the look command."""

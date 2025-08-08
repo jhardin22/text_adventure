@@ -36,6 +36,11 @@ class CommandParser:
                 "aliases": ["get", "pick", "grab"],
                 "description": "Takes an item from the current room.",
                 "usage": "take <item>"
+            },
+            "choose": {
+                "aliases": ["select", "pick"],
+                "description": "Make a choice during a story segment.",
+                "usage": "choose <number>"
             }
         }
         # Create a reverse mapping from alias to canonical command for quick lookups

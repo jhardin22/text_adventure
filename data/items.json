@@ -4,10 +4,10 @@
         "description": "A small, ornate flute made of polished silver. It feels cool to the touch. \n",
         "flavor_text": "As you hold it in your hands, you can almost hear a faint melody echoing from within. \n"
     },
-    "engraved_key": {
-        "name": "ENGRAVED KEY",
-        "description": "A heavy bronze key with an intricate floral pattern engraved on its bow.",
-        "flavor_text": "It feels warm in your hand, humming with a gentle energy."
+    "wedding_band": {
+        "name": "WEDDING BAND",
+        "description": "A thin, band of white gold, a sign of a covenant,  and a key to multiple futures.",
+        "flavor_text": "It feels warm on your finger, humming with a gentle energy."
     },
     "dog_treat": {
         "name": "BACON",

@@ -11,7 +11,16 @@ class GameState:
         self.inventory_ids: Set[str] = set()
         self.completed_doors: Set[str] = set()
         self.game_flags: Dict[str, Any] = {}
-        
+        self.story_progress: Dict[str, str] = {} # NEW: Tracks current node_id per room_id
+
+    def get_story_node(self, room_id: str) -> str:
+        """Gets the current story node for a room, defaults to 'start'."""
+        return self.story_progress.get(room_id, "start")
+
+    def set_story_node(self, room_id: str, node_id: str) -> None:
+        """Sets the current story node for a room."""
+        self.story_progress[room_id] = node_id
+
     def set_flag(self, flag_name: str, value: Any) -> None:
         """Sets a game flag to a specific value. (e.g., 'dog_has_spoken' = True)"""
         self.game_flags[flag_name] = value
