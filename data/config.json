@@ -1,6 +1,6 @@
 {
   "file_paths": {
-    "rooms_data": "data/rooms.json",
+    "rooms_data": "data/rooms",
     "items_data": "data/items.json",
     "save_directory": "saves/"
   },

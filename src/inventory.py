@@ -21,11 +21,12 @@ class Item:
 class Inventory:
     """Manages the player's inventory of items."""
     
-    def __init__(self) -> None:
+    def __init__(self, all_items: Dict[str, Item]) -> None:
         """Initialize an empty inventory."""
         self.items: List[Item] = []
         self.max_items: int = 10  # Reasonable limit
-    
+        self._item_definitions = all_items # Keep a reference to all possible items
+
     def add_item(self, item: Item) -> bool:
         """Add an item to the inventory."""
         if len(self.items) >= self.max_items:
@@ -57,6 +58,13 @@ class Inventory:
                 return item
         return None
     
+    def get_item_by_name(self, name: str) -> Optional[Item]:
+        """Finds an item in the inventory by its name (case-insensitive)."""
+        for item in self.items:
+            if item.name.lower() == name.lower():
+                return item
+        return None
+
     def list_items(self) -> List[str]:
         """Return a list of item names in inventory."""
         return [item.name for item in self.items]
