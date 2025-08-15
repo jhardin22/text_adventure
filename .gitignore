@@ -61,6 +61,6 @@ Thumbs.db
 # Logs
 *.log
 
-narrative/
+old_narrative/
 *scratch*
 
