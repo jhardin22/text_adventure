@@ -335,7 +335,6 @@ class TextAdventure:
         if next_node_id:
             # This is a BRANCH. Update state and show the new choices.
             self.state.set_story_node(self.current_room.room_id, next_node_id)
-            print("\nYou focus on that memory...")
             self._handle_look([]) # Re-display the room with the new choices
             return
 

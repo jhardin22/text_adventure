@@ -1,0 +1,88 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "https://example.com/text_adventure/story_room.schema.json",
+    "title": "Story Room",
+    "description": "Schema for validating a story room file in the text adventure game.",
+    "type": "object",
+    "properties": {
+        "type": {
+            "description": "The type of the room, must be 'story'.",
+            "type": "string",
+            "const": "story"
+        },
+        "name": {
+            "description": "The display name of the room.",
+            "type": "string"
+        },
+        "description": {
+            "description": "The main narrative description of the room upon entry.",
+            "type": "string"
+        },
+        "completion_flag": {
+            "description": "The flag to set in the game state when this story is completed.",
+            "type": "string"
+        },
+        "story_nodes": {
+            "description": "A dictionary of all possible story nodes and choices within this room.",
+            "type": "object",
+            "minProperties": 1,
+            "patternProperties": {
+                "^[a-zA-Z0-9_]+$": {
+                    "type": "object",
+                    "properties": {
+                        "prompt": {
+                            "description": "The question or prompt presented to the player at this node.",
+                            "type": "string"
+                        },
+                        "choices": {
+                            "description": "An array of choices available at this node.",
+                            "type": "array",
+                            "minItems": 1,
+                            "items": {
+                                "oneOf": [
+                                    {
+                                        "title": "Branching Choice",
+                                        "type": "object",
+                                        "properties": {
+                                            "text": { "type": "string" },
+                                            "next_node": { "type": "string" }
+                                        },
+                                        "required": ["text", "next_node"],
+                                        "additionalProperties": false
+                                    },
+                                    {
+                                        "title": "Leaf Choice (Conclusion)",
+                                        "type": "object",
+                                        "properties": {
+                                            "text": { "type": "string" },
+                                            "outcome_text": { "type": "string" },
+                                            "reward": { "type": "string" }
+                                        },
+                                        "required": ["text", "outcome_text"],
+                                        "additionalProperties": false
+                                    }
+                                ]
+                            }
+                        }
+                    },
+                    "required": ["prompt", "choices"]
+                }
+            }
+        },
+        "exits": {
+            "description": "Defines simple exits from this room, typically back to the hub.",
+            "type": "object",
+            "patternProperties": {
+                "^[a-zA-Z0-9_]+$": { "type": "string" }
+            }
+        }
+    },
+    "required": [
+        "type",
+        "name",
+        "description",
+        "completion_flag",
+        "story_nodes",
+        "exits"
+    ]
+}

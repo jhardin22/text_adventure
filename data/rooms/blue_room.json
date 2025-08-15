@@ -3,11 +3,24 @@
         "type": "story",
         "name": "Blue Room",
         "description": "As you pass through the portal, the air is cool and smells faintly of mint. \n",
-        "prompt": "Will you SIT, TALK, or LEAVE?",
         "completion_flag": "blue_room_complete",
         "story_nodes": {
             "start": {
-                "prompt"
+                "prompt": "Will you SIT, TALK, or LEAVE?",
+                "choices": [
+                    {
+                        "text": "SIT",
+                        "next_node": "sit_branch"
+                    },
+                    {
+                        "text": "TALK",
+                        "next_node": "talk_branch"
+                    },
+                    {
+                        "text": "LEAVE",
+                        "next_node": "leave_branch"
+                    }
+                ]
             },
             "sit_branch":{},
             "talk_branch": {},
