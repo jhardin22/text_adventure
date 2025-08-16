@@ -6,8 +6,23 @@
     },
     "wedding_band": {
         "name": "WEDDING BAND",
-        "description": "A thin, band of white gold, a sign of a covenant,  and a key to multiple futures.",
+        "description": "A thin, band of white gold, a sign of a covenant, and a key to multiple futures.",
         "flavor_text": "It feels warm on your finger, humming with a gentle energy."
+    },
+    "knife": {
+        "name": "KNIFE",
+        "description": "A small knife with a sharp blade and a wooden handle. It seems like there's blood on the handle. \n",
+        "flavor_text": "The blade gleams with a faint light, as if it has been recently polished. \n"
+    },
+    "figurine":{
+        "name": "FIGURINE",
+        "description": "A small statue, carved in a reddish wood; A man kneeling, and holding a hoop in both hands.",
+        "flavor_text": "The hoop looks big enough for a finger. "
+    },
+    "crown":{
+        "name": "CROWN",
+        "description": "An ornate diadem of white gold, a sapphire is set in the center.",
+        "flavor_text": "You can imagine yourself standing confidently if you put it on."
     },
     "dog_treat": {
         "name": "BACON",
