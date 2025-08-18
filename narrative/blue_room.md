@@ -1,20 +1,16 @@
 # Blue Room Story
 
-As you step through, you find yourself in a comfortably lit hallway. A blue carpet runs down the hall and around the corner. The air in the hall is warm, and there is a a faint smell of another person in the air. The feeling of excitement falls as you walk
-down the hall, but something about the smell keeps the feeling from leaving you completely.
-You reach the end of the hall and find an open doorway with a sign that reads 'Blue Room'.
-
 ## Entry (start)
 
-A man sits at a desk in the room, writing in a book. He looks up as you enter and smiles. Hope and excitement inexplicably swell again.
+As you step through, you find yourself in a comfortably lit hallway. A blue carpet runs down the hall and around the corner. The air in the hall is warm, and there is a a faint smell of another person in the air. The feeling of excitement falls as you walk down the hall, but something about the smell keeps the feeling from leaving you completely. You reach the end of the hall and find an open doorway with a sign that reads 'Blue Room'. A man sits at a desk in the room, writing in a book. He looks up as you enter and smiles. Hope and excitement inexplicably swell again.
 
 > "Wow, I've been here for ages. It's good to see you. I've been alone for a long time. Would you like to sit with me?"
 
 **Choices:**
 
-- [SIT] -> sit_branch
-- [TALK] -> talk_branch  
-- [LEAVE] -> leave_branch
+- [SIT] -> sit
+- [TALK] -> talk  
+- [LEAVE] -> leave
 
 ## Sit Together (sit)
 
@@ -47,8 +43,8 @@ The question comes out of nowhere. You're not sure how to respond at first, but 
 
 **Choices:**
 
-- [YES] → proposal_yes (REWARD: wedding_band, FLAG: blue_room_complete)
-- [NO] → proposal_no (REWARD: figurine, FLAG: blue_room_complete)
+- [YES] → proposal_yes (REWARD: wedding_band)
+- [NO] → proposal_no (REWARD: figurine)
 
 ## Leave (leave)
 
@@ -76,9 +72,11 @@ You pull out the flute and play a joyful tune. Music fills the room, and the lig
 
 Something warm and wet rubs across your face. You open your eyes to see the dog licking your face.
 
->'You're awake! I was worried you'd never wake up. You've been out for a while.' 
+>'You're awake! I was worried you'd never wake up. You've been out for a while.'
 
-/- "You found, and lost the love of your life."
+/- "You found, and lost, the love of your life."
+
+REWARD: wedding_band
 
 ## Proposal Denied (proposal_no)
 
@@ -99,5 +97,7 @@ He presses a dark lump into your hands and closes them both over it before you c
 Suddenly your legs give out from under you and you fall to your knees. As your vision clears, you can see a while fluffy shape coming over to you, sniffing eagerly at the lump in your hands. As the emotions swell and surge in your head like a tide, you look down and see that you're holding a carved wooden statue, its a man kneeling, holding some kind of hoop out in front of him. The dog speaks, shocking you out of a reverie.
 
 > "Seems like you found something interesting, I wonder what it's for? Do you have any bacon?"
+
+REWARD: figurine
 
 **END**
