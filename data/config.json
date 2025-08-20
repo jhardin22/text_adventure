@@ -1,17 +1,47 @@
 {
   "file_paths": {
-    "rooms_data": "data/rooms",
     "items_data": "data/items.json",
-    "save_directory": "saves/"
+    "rooms_data": "data/rooms",
+    "save_directory": "saves",
+    "schemas_directory": "schemas"
+  },
+  "text_formatting": {
+    "line_width": 80,
+    "paragraph_spacing": 1,
+    "choice_prefix": "  ",
+    "choice_bullet": "•",
+    "prompt_symbol": "> ",
+    "separator_char": "-",
+    "separator_length": 40,
+    "color_enabled": true,
+    "colors": {
+      "description": "white",
+      "choices": "cyan",
+      "error": "red",
+      "success": "green",
+      "warning": "yellow",
+      "dog_text": "blue"
+    }
+  },
+  "gameplay": {
+    "max_inventory_items": 10,
+    "auto_save": true,
+    "save_on_room_change": true,
+    "hint_system_enabled": true,
+    "command_history_size": 50
   },
   "display": {
-    "line_width": 80,
-    "prompt": "> ",
-    "separator": "========================="
+    "clear_screen_on_room_change": false,
+    "show_room_name_on_look": true,
+    "show_exit_list": true,
+    "verbose_descriptions": true,
+    "show_item_count_in_inventory": true
   },
-  "game_settings": {
-    "auto_save": true,
-    "debug_mode": false,
-    "max_save_slots": 5
-  }
+  "debug": {
+    "enabled": false,
+    "log_commands": false,
+    "log_state_changes": false,
+    "show_room_ids": false
+  },
+  "version": "1.0.0"
 }

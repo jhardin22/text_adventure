@@ -13,8 +13,12 @@
                 "unlock_message": "\nSomething inside you swells, there's a feeling of hope and excitement. As your excitement builds you reach out and touch the door, \nyou feel something calling you from the other side. The door opens and you step through. \n",
                 "completion_flag": "blue_room_complete"
             },
-            "east": "red_room",
-            "north": "black_room"
+            "east": { 
+                "destination": "red_room"
+            },
+            "north": {
+                "destination": "black_room"
+            }
         },
         "details": {
             "doors": "Three doors are set into the walls: \n - To the SOUTH, a blue door with silver bands \n - To the EAST, a red door with an ornate bronze floral pattern \n - To the NORTH, a door covered with iron studs connected with twisted gold wire. \n",

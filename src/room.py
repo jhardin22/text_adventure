@@ -16,16 +16,17 @@ class Room(ABC):
         self.name: str = name
         self.description: str = description
         self.items: List[Item] = []
-        self.exits: Dict[str, str] = {}
+        # This now correctly hints that each exit is a dictionary itself.
+        self.exits: Dict[str, Dict[str, Any]] = {}
         self.visited: bool = False
     
     @abstractmethod
-    def enter(self, player_state: Dict[str, Any]) -> str:
+    def enter(self, game_state: 'GameState') -> str: # MODIFIED: Expects GameState
         """Called when player enters this room."""
         pass
     
     @abstractmethod
-    def look(self, game_state: 'GameState') -> str: # MODIFIED: Now requires GameState
+    def look(self, game_state: 'GameState') -> str:
         """Return the room's description when player looks around."""
         pass
     
@@ -61,12 +62,12 @@ class HubRoom(Room):
         self.details = data.get("details", {})
         self.exits = data.get("exits", {})
     
-    def enter(self, player_state: Dict[str, Any]) -> str:
+    def enter(self, game_state: 'GameState') -> str: # MODIFIED: Parameter name
         """Handle entering the hub room."""
         self.visited = True
-        return self.look(player_state) # MODIFIED: Pass the state
+        return self.look(game_state) # MODIFIED: Pass the state
     
-    def look(self, game_state: 'GameState') -> str: # MODIFIED: Accepts GameState
+    def look(self, game_state: 'GameState') -> str:
         """Return the hub room description."""
         description = [
             self.description, # Use the description loaded from JSON
@@ -83,18 +84,24 @@ class HubRoom(Room):
 class StoryRoom(Room):
     """A generic room for story segments that present choices."""
     def __init__(self, data: Dict[str, Any]) -> None:
+        room_id = data.get("room_id")
+        if not room_id:
+            raise ValueError(f"StoryRoom created with invalid data. Missing 'room_id'. Data: {data}")
+
         super().__init__(
-            room_id=data.get("room_id"),
+            room_id=room_id, # Now guaranteed to be a non-empty string
             name=data.get("name", "A Mysterious Place"),
             description=data.get("description", "You're in a room.")
         )
         self.exits = data.get("exits", {})
-        self.story_nodes = data.get("story_nodes", {}) # NEW
+        self.story_nodes = data.get("story_nodes", {})
         self.completion_flag = data.get("completion_flag")
         
-    def enter(self, player_state: 'GameState') -> str:
+    def enter(self, game_state: 'GameState') -> str: # MODIFIED: Parameter name
+        """Handle entering the story room."""
         self.visited = True
-        return self.look(player_state) # MODIFIED: Pass the state
+        # When entering a story room, we should show the current story node
+        return self.look(game_state) # MODIFIED: Pass the state
 
     def get_current_node_data(self, game_state: 'GameState') -> Optional[Dict[str, Any]]:
         """Gets the data for the current story node based on game state."""
